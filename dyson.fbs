@@ -1,0 +1,15 @@
+namespace dyson;
+
+
+table FlatLog
+{
+    level:ubyte;
+    ts:ulong;
+    message:string;
+    fields:[string];
+    origin:string;
+    context:string;
+    stack:string;
+}
+
+root_type FlatLog;
