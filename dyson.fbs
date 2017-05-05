@@ -1,13 +1,12 @@
 namespace dyson;
 
-
 table FlatLog
 {
+    uid:ulong;
+    ts:uint;
     level:ubyte;
-    ts:ulong;
     message:string;
     fields:[string];
-    origin:string;
     context:string;
     stack:string;
 }

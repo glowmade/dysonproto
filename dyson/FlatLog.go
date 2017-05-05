@@ -45,8 +45,32 @@ func (rcv *FlatLog) TablePtr() *flatbuffers.Table {
 	return &rcv._tab
 }
 
-func (rcv *FlatLog) Level() byte {
+func (rcv *FlatLog) Uid() uint64 {
 	o := flatbuffers.UOffsetT(rcv._tab.Offset(4))
+	if o != 0 {
+		return rcv._tab.GetUint64(o + rcv._tab.Pos)
+	}
+	return 0
+}
+
+func (rcv *FlatLog) MutateUid(n uint64) bool {
+	return rcv._tab.MutateUint64Slot(4, n)
+}
+
+func (rcv *FlatLog) Ts() uint32 {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
+	if o != 0 {
+		return rcv._tab.GetUint32(o + rcv._tab.Pos)
+	}
+	return 0
+}
+
+func (rcv *FlatLog) MutateTs(n uint32) bool {
+	return rcv._tab.MutateUint32Slot(6, n)
+}
+
+func (rcv *FlatLog) Level() byte {
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
 	if o != 0 {
 		return rcv._tab.GetByte(o + rcv._tab.Pos)
 	}
@@ -54,23 +78,11 @@ func (rcv *FlatLog) Level() byte {
 }
 
 func (rcv *FlatLog) MutateLevel(n byte) bool {
-	return rcv._tab.MutateByteSlot(4, n)
-}
-
-func (rcv *FlatLog) Ts() uint64 {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(6))
-	if o != 0 {
-		return rcv._tab.GetUint64(o + rcv._tab.Pos)
-	}
-	return 0
-}
-
-func (rcv *FlatLog) MutateTs(n uint64) bool {
-	return rcv._tab.MutateUint64Slot(6, n)
+	return rcv._tab.MutateByteSlot(8, n)
 }
 
 func (rcv *FlatLog) Message() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(8))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
 	if o != 0 {
 		return rcv._tab.ByteVector(o + rcv._tab.Pos)
 	}
@@ -78,7 +90,7 @@ func (rcv *FlatLog) Message() []byte {
 }
 
 func (rcv *FlatLog) Fields(j int) []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
 	if o != 0 {
 		a := rcv._tab.Vector(o)
 		return rcv._tab.ByteVector(a + flatbuffers.UOffsetT(j*4))
@@ -87,19 +99,11 @@ func (rcv *FlatLog) Fields(j int) []byte {
 }
 
 func (rcv *FlatLog) FieldsLength() int {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(10))
+	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
 	if o != 0 {
 		return rcv._tab.VectorLen(o)
 	}
 	return 0
-}
-
-func (rcv *FlatLog) Origin() []byte {
-	o := flatbuffers.UOffsetT(rcv._tab.Offset(12))
-	if o != 0 {
-		return rcv._tab.ByteVector(o + rcv._tab.Pos)
-	}
-	return nil
 }
 
 func (rcv *FlatLog) Context() []byte {
@@ -121,23 +125,23 @@ func (rcv *FlatLog) Stack() []byte {
 func FlatLogStart(builder *flatbuffers.Builder) {
 	builder.StartObject(7)
 }
-func FlatLogAddLevel(builder *flatbuffers.Builder, level byte) {
-	builder.PrependByteSlot(0, level, 0)
+func FlatLogAddUid(builder *flatbuffers.Builder, uid uint64) {
+	builder.PrependUint64Slot(0, uid, 0)
 }
-func FlatLogAddTs(builder *flatbuffers.Builder, ts uint64) {
-	builder.PrependUint64Slot(1, ts, 0)
+func FlatLogAddTs(builder *flatbuffers.Builder, ts uint32) {
+	builder.PrependUint32Slot(1, ts, 0)
+}
+func FlatLogAddLevel(builder *flatbuffers.Builder, level byte) {
+	builder.PrependByteSlot(2, level, 0)
 }
 func FlatLogAddMessage(builder *flatbuffers.Builder, message flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(2, flatbuffers.UOffsetT(message), 0)
+	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(message), 0)
 }
 func FlatLogAddFields(builder *flatbuffers.Builder, fields flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(3, flatbuffers.UOffsetT(fields), 0)
+	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(fields), 0)
 }
 func FlatLogStartFieldsVector(builder *flatbuffers.Builder, numElems int) flatbuffers.UOffsetT {
 	return builder.StartVector(4, numElems, 4)
-}
-func FlatLogAddOrigin(builder *flatbuffers.Builder, origin flatbuffers.UOffsetT) {
-	builder.PrependUOffsetTSlot(4, flatbuffers.UOffsetT(origin), 0)
 }
 func FlatLogAddContext(builder *flatbuffers.Builder, context flatbuffers.UOffsetT) {
 	builder.PrependUOffsetTSlot(5, flatbuffers.UOffsetT(context), 0)
